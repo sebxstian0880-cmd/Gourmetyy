@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Maison | Menú Gourmet Interactivo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#D4AF37',
+                        darkBg: '#0b0b0b',
+                        cardBg: '#161616',
+                        cardBorder: '#2a2a2a'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0b0b;
+            color: #ffffff;
+        }
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .snap-x-mandatory {
+            scroll-snap-type: x mandatory;
+        }
+        .snap-center {
+            scroll-snap-align: center;
+        }
+    </style>
+</head>
+<body class="bg-darkBg text-white min-h-screen pb-28">
+
+    <!-- SPLASH SCREEN DE ENTRADA -->
+    <div id="splashScreen" onclick="entrarAlMenu()" class="fixed inset-0 bg-darkBg z-50 flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-opacity duration-300">
+        <div class="relative mb-6">
+            <div class="w-24 h-24 rounded-full border-2 border-gold flex items-center justify-center animate-pulse">
+                <i class="fa-solid fa-utensils text-4xl text-gold"></i>
+            </div>
+        </div>
+        <h1 class="font-serif-title text-3xl md:text-4xl text-gold tracking-widest uppercase mb-2">Le Maison</h1>
+        <p class="text-gray-400 text-xs tracking-widest uppercase mb-8">Alta Gastronomía & Experiencia 5 Estrellas</p>
+        
+        <div class="bg-gold text-black font-bold py-4 px-8 rounded-full shadow-lg shadow-gold/20 flex items-center gap-2 text-sm pointer-events-none">
+            Ver Menú Interactivo <i class="fa-solid fa-arrow-right"></i>
+        </div>
+        <p class="text-gray-500 text-[10px] mt-4 uppercase tracking-wider">Toca en cualquier parte para entrar</p>
+    </div>
+
+    <!-- HEADER DE LA PÁGINA -->
+    <header class="relative bg-gradient-to-b from-neutral-900 to-darkBg border-b border-cardBorder py-8 px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <span class="bg-gold/10 text-gold text-xs font-semibold px-3 py-1 rounded-full border border-gold/20 uppercase tracking-widest">
+                <i class="fa-solid fa-star text-gold mr-1"></i> 4.9 Exquisite Gourmet
+            </span>
+            <h1 class="font-serif-title text-3xl md:text-5xl text-gold tracking-wider uppercase mt-4 mb-2">Le Maison</h1>
+            <p class="text-gray-400 text-sm tracking-widest uppercase mb-6">Cocina Internacional & Tragos de Autor</p>
+            
+            <div class="flex flex-wrap justify-center items-center gap-3 text-xs">
+                <a href="tel:+584125952360" class="bg-cardBg hover:border-gold border border-cardBorder px-4 py-2 rounded-xl text-gray-200 flex items-center gap-2 transition">
+                    <i class="fa-solid fa-phone text-gold"></i> Llamar Directo
+                </a>
+                <a href="https://play.google.com/store/apps" target="_blank" class="bg-cardBg hover:border-gold border border-cardBorder px-4 py-2 rounded-xl text-gray-200 flex items-center gap-2 transition">
+                    <i class="fa-brands fa-google-play text-gold"></i> Calificar App Store
+                </a>
+                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-2 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-motorcycle"></i> Delivery Disponible
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN DE CATEGORÍAS -->
+    <div class="sticky top-0 z-30 bg-darkBg/95 backdrop-blur-md border-b border-cardBorder py-3 px-4 shadow-xl">
+        <div class="max-w-3xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="categoryNav">
+            <button onclick="filtrarCategoria('todos')" class="cat-btn bg-gold text-black font-semibold px-4 py-2 rounded-xl text-xs whitespace-nowrap transition" data-cat="todos">🔥 Todo</button>
+            <button onclick="filtrarCategoria('combos')" class="cat-btn bg-cardBg hover:bg-neutral-800 text-gray-300 px-4 py-2 rounded-xl text-xs whitespace-nowrap transition border border-cardBorder" data-cat="combos">Combos Exclusivos</button>
+            <button onclick="filtrarCategoria('entradas')" class="cat-btn bg-cardBg hover:bg-neutral-800 text-gray-300 px-4 py-2 rounded-xl text-xs whitespace-nowrap transition border border-cardBorder" data-cat="entradas">Entradas</button>
+            <button onclick="filtrarCategoria('principales')" class="cat-btn bg-cardBg hover:bg-neutral-800 text-gray-300 px-4 py-2 rounded-xl text-xs whitespace-nowrap transition border border-cardBorder" data-cat="principales">Platos Fuertes</button>
+            <button onclick="filtrarCategoria('bebidas')" class="cat-btn bg-cardBg hover:bg-neutral-800 text-gray-300 px-4 py-2 rounded-xl text-xs whitespace-nowrap transition border border-cardBorder" data-cat="bebidas">🥤 Bebidas & Jugos</button>
+            <button onclick="filtrarCategoria('postres')" class="cat-btn bg-cardBg hover:bg-neutral-800 text-gray-300 px-4 py-2 rounded-xl text-xs whitespace-nowrap transition border border-cardBorder" data-cat="postres">🍰 Postres</button>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL / GRID -->
+    <main class="max-w-3xl mx-auto px-4 py-6">
+        <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+        <!-- SECCIÓN DE CALIFICACIÓN GOOGLE PLAY -->
+        <div class="mt-12 bg-cardBg border border-cardBorder rounded-2xl p-6 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 text-gold mb-3">
+                <i class="fa-solid fa-store text-xl"></i>
+            </div>
+            <h3 class="font-serif-title text-xl text-gold mb-2">⭐ Valora nuestra App en Google Play Store</h3>
+            <p class="text-gray-400 text-xs mb-4 max-w-md mx-auto">Comparte tu experiencia calificando nuestra plataforma oficial de pedidos.</p>
+            <a href="https://play.google.com/store/apps" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2.5 px-5 rounded-xl transition">
+                <i class="fa-brands fa-google-play"></i> Ir a Google Play Store
+            </a>
+        </div>
+    </main>
+
+    <!-- MODAL DETALLE INTERACTIVO -->
+    <div id="productModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-cardBorder rounded-2xl max-w-md w-full overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
+            <button onclick="cerrarModal()" class="absolute top-3 right-3 z-20 bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-black transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Galería Multimedia (Swipe Horizontal y Cambio Dinámico) -->
+            <div class="relative h-60 bg-neutral-900 overflow-x-auto flex snap-x-mandatory no-scrollbar" id="modalGallery">
+                <div class="snap-center min-w-full h-full relative">
+                    <img id="modalImage" src="" alt="" class="w-full h-full object-cover transition-all duration-300">
+                    <span class="absolute bottom-3 left-3 bg-black/60 text-white text-[10px] px-2.5 py-1 rounded-full backdrop-blur-md">
+                        <i class="fa-solid fa-camera mr-1 text-gold"></i> Foto HD Interactiva
+                    </span>
+                </div>
+                <div class="snap-center min-w-full h-full relative">
+                    <video id="modalVideo" loop muted playsinline autoplay class="w-full h-full object-cover">
+                        <source src="" type="video/mp4">
+                    </video>
+                    <span class="absolute bottom-3 left-3 bg-black/60 text-white text-[10px] px-2.5 py-1 rounded-full backdrop-blur-md">
+                        <i class="fa-solid fa-video mr-1 text-gold"></i> Video en Vivo
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-5 overflow-y-auto flex-grow">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 id="modalTitle" class="font-serif-title text-xl text-white"></h3>
+                    <span id="modalPrice" class="text-gold font-bold text-lg"></span>
+                </div>
+                <p id="modalDescription" class="text-gray-400 text-xs mb-4 leading-relaxed"></p>
+
+                <!-- Información detallada / Ingredientes -->
+                <div class="bg-neutral-900 border border-cardBorder p-3 rounded-xl mb-4">
+                    <span class="text-[11px] font-semibold text-gold block mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Ingredientes y preparación:</span>
+                    <p id="modalIngredientes" class="text-gray-300 text-xs leading-relaxed"></p>
+                </div>
+
+                <!-- Término de Cocción (Cambia imagen en tiempo real) -->
+                <div class="border-t border-cardBorder pt-4 mb-4" id="coccionContainer">
+                    <label class="text-xs font-semibold text-gray-300 block mb-2">Término de la carne (Modifica la foto):</label>
+                    <select id="modalCoccion" onchange="cambiarFotoTermino()" class="w-full bg-darkBg border border-cardBorder text-gray-200 text-xs rounded-xl p-2.5 focus:border-gold outline-none">
+                        <option value="Término Medio (Jugosa)">Término Medio (Jugosa)</option>
+                        <option value="Término 3/4 (Poco Jugosa)">Término 3/4 (Poco Jugosa)</option>
+                        <option value="Bien Cocida (Sellada)">Bien Cocida (Sellada)</option>
+                    </select>
+                </div>
+
+                <!-- Selección de Salsas / Adicionales -->
+                <div class="border-t border-cardBorder pt-3 mb-4">
+                    <label class="text-xs font-semibold text-gray-300 block mb-2">Salsa y Adicionales:</label>
+                    <select id="modalSalsa" class="w-full bg-darkBg border border-cardBorder text-gray-200 text-xs rounded-xl p-2.5 focus:border-gold outline-none">
+                        <option value="Salsa de la Casa (Reducción de Oporto)">Salsa de la Casa (Vino Oporto)</option>
+                        <option value="Salsa Pimienta Negra">Salsa Pimienta Negra</option>
+                        <option value="Salsa Champiñones al Tartufo">Salsa Champiñones al Tartufo</option>
+                        <option value="Doble Queso & Salsa de Tomate Extra">Doble Queso & Salsa de Tomate Extra</option>
+                        <option value="Sin Adicionales">Sin Adicionales Extra</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-between items-center bg-darkBg border border-cardBorder p-2 rounded-xl mb-4">
+                    <span class="text-xs text-gray-400 pl-2">Cantidad:</span>
+                    <div class="flex items-center gap-3">
+                        <button onclick="cambiarCantidadModal(-1)" class="w-7 h-7 bg-cardBg border border-cardBorder text-gold rounded-lg font-bold flex items-center justify-center hover:bg-neutral-800">-</button>
+                        <span id="modalQty" class="text-sm font-bold w-4 text-center">1</span>
+                        <button onclick="cambiarCantidadModal(1)" class="w-7 h-7 bg-cardBg border border-cardBorder text-gold rounded-lg font-bold flex items-center justify-center hover:bg-neutral-800">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-cardBorder bg-darkBg">
+                <button onclick="confirmarAgregarModal()" class="w-full bg-gold hover:bg-yellow-500 text-black font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-gold/10">
+                    Añadir al Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BARRA FLOTANTE DE CARRITO -->
+    <div class="fixed bottom-0 left-0 right-0 bg-darkBg/95 backdrop-blur-md border-t border-gold/30 p-4 z-40 shadow-2xl">
+        <div class="max-w-3xl mx-auto flex items-center justify-between">
+            <div>
+                <span class="text-xs text-gray-400 block">Total del Pedido:</span>
+                <span id="cartTotal" class="text-gold font-bold text-lg">$0.00</span>
+                <span id="cartCount" class="text-[10px] text-gray-500 block">(0 platos seleccionados)</span>
+            </div>
+            <a id="btnWhatsApp" href="#" onclick="enviarWhatsApp(event)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl text-xs flex items-center gap-2 transition shadow-lg shadow-emerald-500/20">
+                <i class="fa-brands fa-whatsapp text-base"></i> Enviar Pedido 📲
+            </a>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE FUNCIONAMIENTO INTERACTIVO -->
+    <script>
+        const productos = [
+            {
+                id: 1,
+                nombre: "Combo Burger Deluxe",
+                categoria: "combos",
+                precio: 15.00,
+                descripcion: "Burger Doble Carne de Sirloin con queso Cheddar fundido, Papas Trufadas y Jugo Natural.",
+                ingredientes: "Doble carne de sirloin, doble queso cheddar fundido artesanal, rodajas de tomate fresco orgánico, lechuga romana y salsa de tomate especial en pan brioche.",
+                imagen: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-hamburger-being-prepared-42289-large.mp4",
+                imagenesTerminos: {
+                    "Término Medio (Jugosa)": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+                    "Término 3/4 (Poco Jugosa)": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
+                    "Bien Cocida (Sellada)": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=800&q=80"
+                }
+            },
+            {
+                id: 2,
+                nombre: "Combo Gourmet Parejas",
+                categoria: "combos",
+                precio: 45.00,
+                descripcion: "2 Platos Fuertes a seleccionar, 1 Entrada de Autor a elegir y 2 Bebidas.",
+                ingredientes: "Selección doble de cortes finos o salmón, entrada gourmet a elegir y dos bebidas naturales de la casa.",
+                imagen: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-chef-plating-a-gourmet-dish-43306-large.mp4",
+                imagenesTerminos: {
+                    "Término Medio (Jugosa)": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                    "Término 3/4 (Poco Jugosa)": "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80",
+                    "Bien Cocida (Sellada)": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=800&q=80"
+                }
+            },
+            {
+                id: 3,
+                nombre: "Carpaccio de Lomito",
+                categoria: "entradas",
+                precio: 12.00,
+                descripcion: "Finas láminas de lomito marinadas en aceite de oliva virgen extra, alcaparras baby y parmesano.",
+                ingredientes: "Lomito de res cortado en transparencia, aceite de oliva virgen extra, alcaparras baby importadas, lascas de parmesano reggiano y rúcula.",
+                imagen: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-plating-a-dish-with-greens-and-meat-43307-large.mp4",
+                imagenesTerminos: {
+                    "Término Medio (Jugosa)": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                    "Término 3/4 (Poco Jugosa)": "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80",
+                    "Bien Cocida (Sellada)": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=800&q=80"
+                }
+            },
+            {
+                id: 4,
+                nombre: "Bruschettas al Tartufo",
+                categoria: "entradas",
+                precio: 10.00,
+                descripcion: "Pan artesanal de masa madre tostado a la parrilla, crema de trufa blanca y burrata fresca.",
+                ingredientes: "Pan rústico de masa madre, crema untable de trufa blanca italiana, perlas de burrata fresca y reducción de balsámico.",
+                imagen: "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-serving-fresh-food-on-a-plate-43309-large.mp4"
+            },
+            {
+                id: 5,
+                nombre: "Medallones Rossini",
+                categoria: "principales",
+                precio: 28.00,
+                descripcion: "Corte fino de lomito en reducción de vino tinto Oporto, servido sobre suave puré trufado.",
+                ingredientes: "Medallones de lomito de res, reducción de vino Oporto, puré de papas artesanal con aceite de trufa y brotes frescos.",
+                imagen: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-steak-being-cooked-on-a-grill-42291-large.mp4",
+                imagenesTerminos: {
+                    "Término Medio (Jugosa)": "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80",
+                    "Término 3/4 (Poco Jugosa)": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                    "Bien Cocida (Sellada)": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=800&q=80"
+                }
+            },
+            {
+                id: 6,
+                nombre: "Salmón en Costra de Pistacho",
+                categoria: "principales",
+                precio: 24.00,
+                descripcion: "Filete de salmón fresco con costra crujiente de pistachos sobre espárragos blanqueados.",
+                ingredientes: "Filete de salmón atlántico, costra crujiente de pistachos tostados, espárragos verdes al vapor y mantequilla clarificada.",
+                imagen: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-chef-cooking-salmon-in-a-pan-43308-large.mp4",
+                imagenesTerminos: {
+                    "Término Medio (Jugosa)": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80",
+                    "Término 3/4 (Poco Jugosa)": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                    "Bien Cocida (Sellada)": "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80"
+                }
+            },
+            {
+                id: 7,
+                nombre: "Jugo de Naranja Cítrico",
+                categoria: "bebidas",
+                precio: 3.50,
+                descripcion: "100% natural, exprimidor en frío al momento. Servido helado.",
+                ingredientes: "Naranjas valencianas frescas exprimidas en frío al instante sin azúcares añadidos.",
+                imagen: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-pouring-fresh-orange-juice-41558-large.mp4"
+            },
+            {
+                id: 8,
+                nombre: "Limonada Menta & Jengibre",
+                categoria: "bebidas",
+                precio: 4.00,
+                descripcion: "Refrescante limonada frappé con hojas de menta fresca y un toque sutil de jengibre.",
+                ingredientes: "Limones sutiles, hojas frescas de menta orgánica, infusión ligera de jengibre y hielo frappé.",
+                imagen: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-cocktail-being-prepared-by-a-bartender-41555-large.mp4"
+            },
+            {
+                id: 9,
+                nombre: "Tiramisu Tradicional",
+                categoria: "postres",
+                precio: 8.00,
+                descripcion: "Bizcocho savoiardi impregnado en espresso de altura con crema de queso mascarpone.",
+                ingredientes: "Bizcochos savoiardi, café espresso fuerte, crema suave de queso mascarpone italiano y cacao amargo.",
+                imagen: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-slice-of-delicious-chocolate-cake-42290-large.mp4"
+            },
+            {
+                id: 10,
+                nombre: "Volcán de Chocolate Belga",
+                categoria: "postres",
+                precio: 9.00,
+                descripcion: "Bizcocho tibio con corazón fundido de chocolate amargo 70% cacao y helado.",
+                ingredientes: "Bizcocho tibio, centro fundido de chocolate belga al 70% de cacao y helado de vainilla artesanal.",
+                imagen: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+                video: "https://assets.mixkit.co/videos/preview/mixkit-pouring-chocolate-sauce-on-a-dessert-42288-large.mp4"
+            }
+        ];
+
+        let carrito = [];
+        let productoSeleccionadoModal = null;
+        let cantidadModal = 1;
+
+        window.onload = () => {
+            renderizarProductos(productos);
+        };
+
+        function entrarAlMenu() {
+            const splash = document.getElementById('splashScreen');
+            if(splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => { 
+                    splash.style.display = 'none'; 
+                }, 300);
+            }
+        }
+
+        function renderizarProductos(items) {
+            const grid = document.getElementById('productsGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            items.forEach(p => {
+                grid.innerHTML += `
+                    <div class="bg-cardBg border border-cardBorder rounded-2xl overflow-hidden hover:border-gold/50 transition duration-300 flex flex-col justify-between">
+                        <div class="relative h-48 cursor-pointer overflow-hidden" onclick="abrirModal(${p.id})">
+                            <img src="${p.imagen}" alt="${p.nombre}" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 right-3 bg-black/70 backdrop-blur-md text-gold text-xs font-bold px-2.5 py-1 rounded-full border border-gold/20">
+                                $${p.precio.toFixed(2)}
+                            </span>
+                            <span class="absolute bottom-3 left-3 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-md backdrop-blur-md flex items-center gap-1">
+                                <i class="fa-solid fa-circle-info text-gold"></i> Toca para ver info y preparar
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <div>
+                                <h3 class="font-serif-title text-base text-white mb-1 cursor-pointer" onclick="abrirModal(${p.id})">${p.nombre}</h3>
+                                <p class="text-gray-400 text-xs line-clamp-2 mb-4 leading-relaxed">${p.descripcion}</p>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-cardBorder/50">
+                                <span class="text-gold font-bold text-sm">$${p.precio.toFixed(2)}</span>
+                                <button onclick="abrirModal(${p.id})" class="bg-gold/10 hover:bg-gold text-gold hover:text-black border border-gold/30 font-semibold px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1">
+                                    + Ver / Personalizar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filtrarCategoria(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.dataset.cat === cat) {
+                    btn.className = "cat-btn bg-gold text-black font-semibold px-4 py-2 rounded-xl text-xs whitespace-nowrap transition";
+                } else {
+                    btn.className = "cat-btn bg-cardBg hover:bg-neutral-800 text-gray-300 px-4 py-2 rounded-xl text-xs whitespace-nowrap transition border border-cardBorder";
+                }
+            });
+
+            if(cat === 'todos') {
+                renderizarProductos(productos);
+            } else {
+                const filtrados = productos.filter(p => p.categoria === cat);
+                renderizarProductos(filtrados);
+            }
+        }
+
+        function abrirModal(id) {
+            productoSeleccionadoModal = productos.find(p => p.id === id);
+            cantidadModal = 1;
+
+            document.getElementById('modalTitle').innerText = productoSeleccionadoModal.nombre;
+            document.getElementById('modalPrice').innerText = '$' + productoSeleccionadoModal.precio.toFixed(2);
+            document.getElementById('modalDescription').innerText = productoSeleccionadoModal.descripcion;
+            document.getElementById('modalIngredientes').innerText = productoSeleccionadoModal.ingredientes;
+            document.getElementById('modalImage').src = productoSeleccionadoModal.imagen;
+            document.getElementById('modalVideo').src = productoSeleccionadoModal.video;
+            document.getElementById('modalQty').innerText = cantidadModal;
+
+            const coccionBox = document.getElementById('coccionContainer');
+            if(productoSeleccionadoModal.imagenesTerminos) {
+                coccionBox.style.display = 'block';
+            } else {
+                coccionBox.style.display = 'none';
+            }
+
+            document.getElementById('modalGallery').scrollLeft = 0;
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function cambiarFotoTermino() {
+            const termino = document.getElementById('modalCoccion').value;
+            if(productoSeleccionadoModal.imagenesTerminos && productoSeleccionadoModal.imagenesTerminos[termino]) {
+                document.getElementById('modalImage').src = productoSeleccionadoModal.imagenesTerminos[termino];
+            }
+        }
+
+        function cerrarModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            document.getElementById('modalVideo').pause();
+        }
+
+        function cambiarCantidadModal(delta) {
+            if (cantidadModal + delta >= 1) {
+                cantidadModal += delta;
+                document.getElementById('modalQty').innerText = cantidadModal;
+            }
+        }
+
+        function confirmarAgregarModal() {
+            const coccion = productoSeleccionadoModal.imagenesTerminos ? document.getElementById('modalCoccion').value : 'N/A';
+            const salsa = document.getElementById('modalSalsa').value;
+
+            const itemExistente = carrito.find(c => c.id === productoSeleccionadoModal.id && c.coccion === coccion && c.salsa === salsa);
+
+            if(itemExistente) {
+                itemExistente.cantidad += cantidadModal;
+            } else {
+                carrito.push({
+                    id: productoSeleccionadoModal.id,
+                    nombre: productoSeleccionadoModal.nombre,
+                    precio: productoSeleccionadoModal.precio,
+                    coccion: coccion,
+                    salsa: salsa,
+                    cantidad: cantidadModal
+                });
+            }
+
+            actualizarCarritoBarra();
+            cerrarModal();
+        }
+
+        function actualizarCarritoBarra() {
+            let total = 0;
+            let count = 0;
+            carrito.forEach(item => {
+                total += item.precio * item.cantidad;
+                count += item.cantidad;
+            });
+            document.getElementById('cartTotal').innerText = '$' + total.toFixed(2);
+            document.getElementById('cartCount').innerText = `(${count} platos seleccionados)`;
+        }
+
+        function enviarWhatsApp(e) {
+            if (carrito.length === 0) {
+                e.preventDefault();
+                alert('Por favor selecciona al menos un plato de nuestro menú antes de enviar el pedido.');
+                return;
+            }
+
+            let mensaje = "Hola, *Le Maison*! 🍷 Deseo realizar el siguiente pedido gourmet:%0A%0A";
+            let total = 0;
+
+            carrito.forEach(item => {
+                let sub = item.precio * item.cantidad;
+                mensaje += `• *${item.cantidad}x ${item.nombre}* ($${sub.toFixed(2)})%0A`;
+                if(item.coccion !== 'N/A') mensaje += `  _Término/Estilo: ${item.coccion}_%0A`;
+                mensaje += `  _Adicional/Salsa: ${item.salsa}_%0A`;
+                total += sub;
+            });
+
+            mensaje += `%0A*Total a Pagar:* $${total.toFixed(2)}%0A%0AQuedo atento para confirmar mi pedido.`;
+
+            let telefono = "584125952360";
+            let url = `https://wa.me/${telefono}?text=${mensaje}`;
+
+            document.getElementById('btnWhatsApp').href = url;
+        }
+    </script>
+</body>
+</html>
